@@ -1,5 +1,4 @@
-import bot from './assets/bot.svg'
-import user from './assets/user.svg'
+import bot from './javascript.svg';
 
 const form = document.querySelector('form')
 const chatContainer = document.querySelector('#chat_container')
@@ -50,9 +49,9 @@ function chatStripe(isAi, value, uniqueId) {
         <div class="wrapper ${isAi && 'ai'}">
             <div class="chat">
                 <div class="profile">
-                    <img 
-                      src=${isAi ? bot : user} 
-                      alt="${isAi ? 'bot' : 'user'}" 
+                    <img
+                      src=${isAi ? bot : bot}
+                      alt="${isAi ? 'bot' : 'user'}"
                     />
                 </div>
                 <div class="message" id=${uniqueId}>${value}</div>
@@ -66,27 +65,25 @@ const handleSubmit = async (e) => {
     e.preventDefault()
 
     const data = new FormData(form)
-
     // user's chatstripe
     chatContainer.innerHTML += chatStripe(false, data.get('prompt'))
 
-    // to clear the textarea input 
+    // to clear the textarea input
     form.reset()
 
     // bot's chatstripe
     const uniqueId = generateUniqueId()
     chatContainer.innerHTML += chatStripe(true, " ", uniqueId)
 
-    // to focus scroll to the bottom 
+    // to focus scroll to the bottom
     chatContainer.scrollTop = chatContainer.scrollHeight;
 
-    // specific message div 
+    // specific message div
     const messageDiv = document.getElementById(uniqueId)
 
     // messageDiv.innerHTML = "..."
-    loader(messageDiv);
-
-    const response = await fetch('https://kutty.onrender.com', {
+    loader(messageDiv)
+    const response = await fetch('https://codex-chatgpt-o33z.onrender.com/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -97,23 +94,22 @@ const handleSubmit = async (e) => {
     })
 
     clearInterval(loadInterval)
-    messageDiv.innerHTML = '';
+    messageDiv.innerHTML = " "
 
     if (response.ok) {
         const data = await response.json();
-        const parsedData = data.bot.trim();// trims any trailing spaces/'\n' 
+        const parsedData = data.bot.trim() // trims any trailing spaces/'\n'
 
-        typeText(messageDiv, parsedData);
+        typeText(messageDiv, parsedData)
     } else {
-        const err = await response.text();
+        const err = await response.text()
 
         messageDiv.innerHTML = "Something went wrong"
-        
         alert(err)
     }
 }
 
-form.addEventListener('submit', handleSubmit);
+form.addEventListener('submit', handleSubmit)
 form.addEventListener('keyup', (e) => {
     if (e.keyCode === 13) {
         handleSubmit(e)
